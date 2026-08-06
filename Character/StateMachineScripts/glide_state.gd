@@ -3,11 +3,17 @@ extends State
 
 
 func enter() -> void:
-	player.anim_player.play("glide")
+	player.travel_to_anim("glide")
+	# 2. 显示降落伞模型
+	if player.glider_mesh:
+		player.glider_mesh.visible = true
 	pass
 
 func exit() -> void:
 	# 收起滑翔伞模型
+	# 2. 显示降落伞模型
+	if player.glider_mesh:
+		player.glider_mesh.visible = false
 	pass
 
 func physics_update(delta: float) -> void:
@@ -29,7 +35,4 @@ func physics_update(delta: float) -> void:
 
 	# 3. 条件转移：如果接触地面 -> 依据输入切回 Idle 或 Run
 	if player.is_on_floor():
-		if input_dir.length() > 0:
-			state_machine.transition_to("run")
-		else:
-			state_machine.transition_to("idle")
+		state_machine.transition_to("grounded_state")

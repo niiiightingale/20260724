@@ -1,6 +1,9 @@
 class_name StateMachine
 extends Node
 
+# 定义状态切换信号，将新状态的名字传出去
+signal state_changed(new_state_name: String)
+
 @export var initial_state: State
 
 var current_state: State
@@ -20,6 +23,8 @@ func init(player: CharacterBody3D) -> void:
 	if initial_state:
 		current_state = initial_state
 		current_state.enter()
+		# 发射初始状态名称信号
+		state_changed.emit(current_state.name)
 
 func _unhandled_input(event: InputEvent) -> void:
 	if current_state:
@@ -44,3 +49,6 @@ func transition_to(target_state_name: String) -> void:
 	
 	current_state = states[key]
 	current_state.enter()
+	
+	# 状态切换成功后发射信号
+	state_changed.emit(current_state.name)

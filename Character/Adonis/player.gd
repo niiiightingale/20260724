@@ -2,6 +2,7 @@ extends CharacterBody3D
 
 # --- 节点引用 ---
 @onready var anim_player: AnimationPlayer = $Anemone/AnimationPlayer
+@onready var anim_tree: AnimationTree = $AnimationTree
 @onready var state_machine: StateMachine = $StateMachine
 @onready var ground_raycast: RayCast3D = $GroundRayCast
 @onready var visual_mesh: Node3D = $Anemone
@@ -11,23 +12,26 @@ extends CharacterBody3D
 # ==========================================
 # --- 统一参数配置区 (Inspector 可视化调节) ---
 # ==========================================
-@export_group("移动参数")
+@export_group("移动与惯性参数")
 @export var run_speed: float = 6.0
-@export var rotation_speed: float = 12.0 # 角色转向平滑度
+@export var acceleration: float = 10.0 # 加速度
+@export var friction: float = 8.0     # 阻尼/减速度
+@export var rotation_speed: float = 6.0 # 模型转向速度
 
 @export_group("跳跃与下落")
-@export var jump_velocity: float = 10.0  # 跳跃初始爆发速度
-@export var rise_gravity: float = 20.0   # 上升阶段重力
-@export var fall_gravity: float = 24.0   # 下落阶段重力
-@export var air_move_speed: float = 5.0  # 空中水平移动控制力
+@export var jump_velocity: float = 10.0
+@export var rise_gravity: float = 20.0
+@export var fall_gravity: float = 24.0
+@export var air_move_speed: float = 5.0
 
 @export_group("滑翔参数")
-@export var glide_speed: float = 8.0     # 滑翔水平速度
-@export var glide_gravity: float = 3.0   # 滑翔下降重力（较小）
-@export var max_glide_fall_speed: float = -2.0 # 滑翔最大下落终端速度
+@export var glider_mesh: Node3D # 在 Inspector 面板中挂载你的降落伞模型节点
+@export var glide_speed: float = 8.0
+@export var glide_gravity: float = 3.0
+@export var max_glide_fall_speed: float = -2.0
 
 # ==========================================
-# --- 暴露给 State 读取的实时运行数据 ---
+# --- 实时运行数据 ---
 # ==========================================
 var input_dir: Vector2 = Vector2.ZERO
 var move_direction: Vector3 = Vector3.ZERO
@@ -39,9 +43,20 @@ var is_grounded: bool = false
 var horizontal_speed: float = 0.0
 var vertical_velocity: float = 0.0
 
+# 动画状态机播放控制器
+var anim_playback: AnimationNodeStateMachinePlayback
+
 func _ready() -> void:
 	if not camera:
 		camera = get_viewport().get_camera_3d()
+	# 游戏启动时默认隐藏降落伞
+	if glider_mesh:
+		glider_mesh.visible = false
+		
+	if anim_tree:
+		anim_tree.active = true
+		anim_playback = anim_tree.get("parameters/playback") as AnimationNodeStateMachinePlayback
+		
 	state_machine.init(self)
 
 func _physics_process(delta: float) -> void:
@@ -50,14 +65,37 @@ func _physics_process(delta: float) -> void:
 	jump_just_pressed = Input.is_action_just_pressed("jump")
 	glide_just_pressed = Input.is_action_just_pressed("glide")
 	
-	# 2. 转换基于摄像机的移动向量与旋转
+	# 2. 视角转译与转向
 	_update_move_direction()
 	_update_rotation(delta)
 	
-	# 3. 运行环境检测与数据暴露
+	# 3. 实时速度与接地数据更新
 	is_grounded = is_on_floor() or ground_raycast.is_colliding()
 	vertical_velocity = velocity.y
 	horizontal_speed = Vector2(velocity.x, velocity.z).length()
+	
+	# 4. 驱动 AnimationTree 内的 BlendSpace 参数
+	_update_animation_tree()
+
+# 核心接口：专供各 State 调用的动画切换函数
+func travel_to_anim(anim_node_name: String) -> void:
+	if anim_playback:
+		anim_playback.travel(anim_node_name)
+
+# 实时驱动地面/空中 1D 混合空间
+func _update_animation_tree() -> void:
+	if not anim_tree:
+		return
+		
+	if is_grounded:
+		# 驱动地面 MoveBlend (0.0 ~ 1.0)
+		var speed_percent: float = clamp(horizontal_speed / run_speed, 0.0, 1.0)
+		anim_tree.set("parameters/MoveBlend/blend_position", speed_percent)
+	else:
+		# 驱动空中 AirState (-1.0 ~ 1.0)
+		# 映射规则：以 -15.0(最大下落速度) 到 10.0(起跳速度) 映射到 -1.0 ~ 1.0
+		var air_val: float = remap(velocity.y, -15.0, jump_velocity, -1.0, 1.0)
+		anim_tree.set("parameters/AirState/blend_position", clamp(air_val, -1.0, 1.0))
 
 func _update_move_direction() -> void:
 	if not camera:
