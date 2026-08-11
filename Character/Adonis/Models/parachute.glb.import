@@ -4,12 +4,12 @@ importer="scene"
 importer_version=1
 type="PackedScene"
 uid="uid://b1my1fgncjldg"
-path="res://.godot/imported/parachute.glb-451b2a25aaa79082d7a30a51dc048805.scn"
+path="res://.godot/imported/parachute.glb-032dd1983514094183e807deed9f525c.scn"
 
 [deps]
 
-source_file="res://Character/Adonis/parachute.glb"
-dest_files=["res://.godot/imported/parachute.glb-451b2a25aaa79082d7a30a51dc048805.scn"]
+source_file="res://Character/Adonis/Models/parachute.glb"
+dest_files=["res://.godot/imported/parachute.glb-032dd1983514094183e807deed9f525c.scn"]
 
 [params]
 

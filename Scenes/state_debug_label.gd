@@ -13,10 +13,10 @@ func _ready() -> void:
 		
 		# 2. 如果初始化时已经有 current_state，先显示当前状态
 		if state_machine.current_state:
-			text = "STATE: " + state_machine.current_state.name
+			text = "State: " + state_machine.current_state.name
 	else:
-		text = "STATE: [StateMachine Unassigned]"
+		text = "State: [StateMachine Unassigned]"
 
 # 信号回调
 func _on_state_changed(new_state_name: String) -> void:
-	text = "STATE: " + new_state_name
+	text = "State: " + new_state_name

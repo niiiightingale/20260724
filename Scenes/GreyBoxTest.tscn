@@ -1,0 +1,45 @@
+[gd_scene format=3 uid="uid://ba4rwvldfd7ml"]
+
+[node name="GreyBoxTest" type="Node3D" unique_id=2072986477]
+
+[node name="CSGBox3D" type="CSGBox3D" parent="." unique_id=756088589]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.99, 0, -1.9810934)
+use_collision = true
+size = Vector3(34, 1, 18.227814)
+
+[node name="CSGBox3D2" type="CSGBox3D" parent="." unique_id=1366576752]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.1984057, 2.7086096, -8.198219)
+use_collision = true
+size = Vector3(5.704707, 6, 4.7634573)
+
+[node name="CSGBox3D3" type="CSGBox3D" parent="." unique_id=1163858573]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -3.4438357, 2.2432861, -0.73527193)
+use_collision = true
+size = Vector3(4, 4, 3)
+
+[node name="CSGBox3D4" type="CSGBox3D" parent="." unique_id=2123583884]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.0266714, 1.2432861, 2.264728)
+use_collision = true
+size = Vector3(3.0587158, 2, 3)
+
+[node name="CSGBox3D5" type="CSGBox3D" parent="." unique_id=621563242]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 13.24829, 1.838562, 2.264728)
+use_collision = true
+size = Vector3(2.4980469, 3.1905518, 3)
+
+[node name="CSGBox3D6" type="CSGBox3D" parent="." unique_id=333760249]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 17.997314, 1.2432861, 2.264728)
+use_collision = true
+size = Vector3(3, 2, 3)
+
+[node name="CSGPolygon3D" type="CSGPolygon3D" parent="." unique_id=1397669493]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5, 4, -5)
+use_collision = true
+polygon = PackedVector2Array(0, -4, 0, 2, 11, -4)
+depth = 6.22
+
+[node name="CSGPolygon3D2" type="CSGPolygon3D" parent="." unique_id=521083848]
+transform = Transform3D(-0.99999213, 0, 0.0039667105, 0, 1, 0, -0.0039667105, 0, -0.99999213, 5.3942866, 4, 0.6680393)
+use_collision = true
+polygon = PackedVector2Array(0, -4, -0.019201279, -1.7189982, 5.5318966, -3.9201822)
+depth = 1.77

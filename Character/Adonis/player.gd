@@ -1,11 +1,13 @@
 extends CharacterBody3D
 
 # --- 节点引用 ---
-@onready var anim_player: AnimationPlayer = $Anemone/AnimationPlayer
+@onready var anim_player: AnimationPlayer = $Adonis/AnimationPlayer
 @onready var anim_tree: AnimationTree = $AnimationTree
 @onready var state_machine: StateMachine = $StateMachine
 @onready var ground_raycast: RayCast3D = $GroundRayCast
-@onready var visual_mesh: Node3D = $Anemone
+@onready var visual_mesh: Node3D = $Adonis
+@onready var jump_component: JumpComponent = $JumpComponent
+@onready var skeleton:Skeleton3D = $Adonis/rig/Skeleton3D
 
 @export var camera: Camera3D
 
@@ -27,8 +29,13 @@ extends CharacterBody3D
 @export_group("滑翔参数")
 @export var glider_mesh: Node3D # 在 Inspector 面板中挂载你的降落伞模型节点
 @export var glide_speed: float = 8.0
-@export var glide_gravity: float = 3.0
+@export var glide_gravity: float = 2.0
 @export var max_glide_fall_speed: float = -2.0
+@export var glide_acceleration: float = 1.5      # 极小的滑翔加速度
+@export var glide_friction: float = 1.0          # 极小的空气阻力
+@export var glide_rotation_speed: float = 1.5   # 缓慢的伞面转向速度
+@export var glide_tilt_angle: float = 20.0       # 离心摆动倾斜角
+
 
 # ==========================================
 # --- 实时运行数据 ---
@@ -60,6 +67,8 @@ func _ready() -> void:
 	state_machine.init(self)
 
 func _physics_process(delta: float) -> void:
+	if jump_component and jump_component.is_jumping:
+		return
 	# 1. 收集输入
 	input_dir = Input.get_vector("move_left", "move_right", "move_forward", "move_backward")
 	jump_just_pressed = Input.is_action_just_pressed("jump")
@@ -67,7 +76,6 @@ func _physics_process(delta: float) -> void:
 	
 	# 2. 视角转译与转向
 	_update_move_direction()
-	_update_rotation(delta)
 	
 	# 3. 实时速度与接地数据更新
 	is_grounded = is_on_floor() or ground_raycast.is_colliding()
@@ -77,10 +85,7 @@ func _physics_process(delta: float) -> void:
 	# 4. 驱动 AnimationTree 内的 BlendSpace 参数
 	_update_animation_tree()
 
-# 核心接口：专供各 State 调用的动画切换函数
-func travel_to_anim(anim_node_name: String) -> void:
-	if anim_playback:
-		anim_playback.travel(anim_node_name)
+
 
 # 实时驱动地面/空中 1D 混合空间
 func _update_animation_tree() -> void:
@@ -113,10 +118,56 @@ func _update_move_direction() -> void:
 	
 	move_direction = (right * input_dir.x + forward * -input_dir.y).normalized()
 
-func _update_rotation(delta: float) -> void:
+# 改为供需要旋转的状态主动调用的辅助函数
+func rotate_towards_move_direction(delta: float) -> void:
 	if move_direction.length() > 0.1 and visual_mesh:
 		var target_rotation = Transform3D().looking_at(move_direction, Vector3.UP).basis
 		visual_mesh.global_transform.basis = visual_mesh.global_transform.basis.slerp(
 			target_rotation, 
 			rotation_speed * delta
 		)
+
+# 你原有的核心接口
+func travel_to_anim(anim_node_name: String) -> void:
+	if anim_playback:
+		anim_playback.travel(anim_node_name)
+
+# 1. 调控动画播放速度 (传入 0.0 可直接冻结当前帧)
+func set_anim_speed(speed: float) -> void:
+	if anim_player:
+		anim_player.speed_scale = speed
+
+# 2. 获取当前 AnimationTree 节点名称
+func get_current_anim() -> String:
+	if anim_playback:
+		return anim_playback.get_current_node()
+	return ""
+
+# 3. 获取指定动画剪辑的时长 (秒)
+func get_anim_length(anim_name: String) -> float:
+	if anim_player and anim_player.has_animation(anim_name):
+		return anim_player.get_animation(anim_name).length
+	return 0.8 # 保底时长
+
+# 4. ✨ 抓取 hips 世界绝对坐标并换算为玩家实体 (脚底) 落地坐标
+func get_landing_pos_by_hips(bone_name: String = "hips") -> Vector3:
+	if skeleton == null:
+		return global_position
+		
+	var bone_idx: int = skeleton.find_bone(bone_name)
+	if bone_idx != -1:
+		# 抓取 hips 在世界空间的真实绝对 Transform
+		var hips_global_tf: Transform3D = skeleton.global_transform * skeleton.get_bone_global_pose(bone_idx)
+		var hips_world_pos: Vector3 = hips_global_tf.origin
+		
+		# 动态获取默认站立姿态下 hips 的原生腰高 (例如 0.85 米)
+		var default_hips_height: float = skeleton.get_bone_pose_position(bone_idx).y
+		if default_hips_height <= 0.05:
+			default_hips_height = 0.85 # 保底腰高
+			
+		# 腹部绝对坐标 - 腰高 = 碰撞盒/脚底真正的落地绝对坐标！
+		var landing_pos: Vector3 = hips_world_pos
+		landing_pos.y -= default_hips_height
+		return landing_pos
+		
+	return global_position

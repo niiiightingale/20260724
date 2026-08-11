@@ -16,11 +16,6 @@ func physics_update(delta: float) -> void:
 		state_machine.transition_to("grounded_state")
 		return
 
-	# 2. 条件转移：如果落地瞬间又按了跳跃 -> 再次进入起跳前摇
-	if player.jump_just_pressed:
-		state_machine.transition_to("jumpprepare")
-		return
-
 	# 落地惯性减速
 	player.velocity.x = lerp(player.velocity.x, 0.0, player.friction * delta)
 	player.velocity.z = lerp(player.velocity.z, 0.0, player.friction * delta)

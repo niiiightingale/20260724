@@ -2,29 +2,34 @@
 
 [ext_resource type="Script" uid="uid://csjccrhj5wnx7" path="res://addons/phantom_camera/scripts/phantom_camera/phantom_camera_3d.gd" id="1_vnucn"]
 [ext_resource type="Script" uid="uid://8umksf8e80fw" path="res://addons/phantom_camera/scripts/resources/tween_resource.gd" id="2_c3mwy"]
-[ext_resource type="PackedScene" uid="uid://l80f871upg2i" path="res://Character/Adonis/Anemone.tscn" id="3_4g5cr"]
+[ext_resource type="PackedScene" uid="uid://ba4rwvldfd7ml" path="res://Scenes/GreyBoxTest.tscn" id="2_ckhy6"]
+[ext_resource type="PackedScene" uid="uid://l80f871upg2i" path="res://Character/Adonis/Adonis.tscn" id="3_4g5cr"]
+[ext_resource type="Script" uid="uid://dobyg6dq2l83b" path="res://Scenes/camera_controller.gd" id="3_ckhy6"]
 [ext_resource type="Script" uid="uid://dcgirgnwpiyhu" path="res://Scenes/state_debug_label.gd" id="4_c3mwy"]
-
-[sub_resource type="PhysicalSkyMaterial" id="PhysicalSkyMaterial_56pq6"]
-
-[sub_resource type="Sky" id="Sky_ts7x6"]
-sky_material = SubResource("PhysicalSkyMaterial_56pq6")
+[ext_resource type="Script" uid="uid://bd046eokvcnu2" path="res://addons/phantom_camera/scripts/phantom_camera_host/phantom_camera_host.gd" id="7_r3lo5"]
+[ext_resource type="PackedScene" uid="uid://c0g3v8h62ktpm" path="res://Scenes/JumpLedge3D.tscn" id="8_qtxxq"]
+[ext_resource type="Script" uid="uid://dgboxokflxa8n" path="res://Scenes/ladder_3d.gd" id="9_8fnbn"]
+[ext_resource type="PackedScene" uid="uid://ou867no5hv6k" path="res://Character/Adonis/Models/ladder.glb" id="9_qtxxq"]
 
 [sub_resource type="Environment" id="Environment_fc8m0"]
-background_mode = 2
-sky = SubResource("Sky_ts7x6")
+background_mode = 1
+background_color = Color(1, 1, 1, 1)
 ssao_enabled = true
+ssao_radius = 4.1
+ssao_intensity = 1.42
+ssao_horizon = 0.0
+ssao_sharpness = 0.0
 ssil_enabled = true
+ssil_radius = 1.14
+fog_enabled = true
+fog_light_color = Color(0.8648807, 0.91937935, 0.9667588, 1)
+adjustment_enabled = true
 
-[sub_resource type="Resource" id="Resource_jnlp7"]
+[sub_resource type="Resource" id="Resource_dun2r"]
 script = ExtResource("2_c3mwy")
 
-[sub_resource type="Curve3D" id="Curve3D_c3mwy"]
-_data = {
-"points": PackedVector3Array(0, 0, 0, 0, 0, 0, -10.654242, 5.5, 8.094637, 0, 0, 0, 0, 0, 0, 8.256779, 5.500001, 6.749654, 0, 0, 0, 0, 0, 0, 10.375038, 5.499999, -0.25404882, 0, 0, 0, 0, 0, 0, 6.5486565, 8.561784, -1.0000005, 0, 0, 0, 0, 0, 0, 2, 10, -2, 0, 0, 0, 0, 0, 0, -6.4238167, 11.697933, -1.9168445),
-"tilts": PackedFloat32Array(0, 0, 0, 0, 0, 0)
-}
-point_count = 6
+[sub_resource type="BoxShape3D" id="BoxShape3D_fc8m0"]
+size = Vector3(0.82476807, 1.0788574, 0.85498047)
 
 [node name="root" type="Node3D" unique_id=1129146952]
 
@@ -33,176 +38,19 @@ environment = SubResource("Environment_fc8m0")
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=1279088389]
 transform = Transform3D(1, 0, 0, 0, -4.371139e-08, 1, 0, -1, -4.371139e-08, 0, 30.000431, 0)
-light_energy = 12.286
-light_indirect_energy = 1.2
-light_volumetric_fog_energy = 0.243
 shadow_enabled = true
 sky_mode = 2
 
-[node name="PhantomCamera3D" type="Node3D" parent="." unique_id=2006059496 node_paths=PackedStringArray("follow_target", "follow_path", "look_at_target")]
-transform = Transform3D(0.9974804, -0.047735315, 0.05248049, -1.8626451e-09, 0.73975897, 0.67287165, -0.070942685, -0.6711762, 0.73789513, 2.6404634, 5.5, 7.7891903)
-top_level = true
-script = ExtResource("1_vnucn")
-follow_mode = 4
-follow_target = NodePath("../Anemone")
-follow_path = NodePath("../Path3D")
-look_at_mode = 2
-look_at_target = NodePath("../Anemone")
-tween_resource = SubResource("Resource_jnlp7")
-follow_damping = true
-align_transform_with_view = Callable()
-align_position_with_view = Callable()
-align_rotation_with_view = Callable()
-metadata/_custom_type_script = "uid://csjccrhj5wnx7"
-
-[node name="Camera3D" type="Camera3D" parent="PhantomCamera3D" unique_id=464038036]
-transform = Transform3D(1, 0, 0, 0, 1.0000002, 0, 0, 0, 1.0000001, 0, 0, 0)
-current = true
-fov = 59.6
-
-[node name="Anemone" parent="." unique_id=356527856 node_paths=PackedStringArray("camera") instance=ExtResource("3_4g5cr")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.2513022, 0.51042175, 2.31744)
-camera = NodePath("../PhantomCamera3D/Camera3D")
+[node name="Adonis" parent="." unique_id=356527856 instance=ExtResource("3_4g5cr")]
+transform = Transform3D(0.99993116, 0, 0.011733711, 0, 1, 0, -0.011733711, 0, 0.99993116, 0.20925462, 0.51042175, 4.0915065)
 run_speed = 4.0
 acceleration = 5.0
-rotation_speed = 5.0
+rotation_speed = 11.005
 jump_velocity = 8.665
 glide_speed = 2.0
 
-[node name="Skeleton3D" parent="Anemone/Anemone/rig" parent_id_path=PackedInt32Array(356527856, 310442228, 276013446) index="0" unique_id=530883721]
-bones/1/position = Vector3(5.609706e-15, 0.025147155, 0.31359693)
-bones/3/rotation = Quaternion(0.017705183, -2.3828724e-07, 1.6694445e-12, 0.99984336)
-bones/4/rotation = Quaternion(-0.0062961737, -9.3938336e-11, 1.5004602e-09, 0.9999803)
-bones/5/rotation = Quaternion(0.0014439699, -8.376408e-14, -3.441763e-10, 0.99999905)
-bones/6/position = Vector3(0.15060584, 0.0482905, 0.41222635)
-bones/6/rotation = Quaternion(-0.10220557, 0.92249835, 0.002504312, 0.37221587)
-bones/6/scale = Vector3(0.99999994, 0.9991995, 1)
-bones/7/position = Vector3(-0.15060583, 0.048290573, 0.41222635)
-bones/7/rotation = Quaternion(0.10220579, 0.9224983, 0.0025043935, -0.37221608)
-bones/7/scale = Vector3(1, 0.99919975, 1)
-bones/8/position = Vector3(0.07282754, -0.0024048286, 0.1431447)
-bones/8/rotation = Quaternion(0.9943144, 0.0341497, -0.06984426, -0.072763264)
-bones/8/scale = Vector3(1, 0.9595572, 1.0000008)
-bones/9/position = Vector3(-0.072827555, -0.0024049534, 0.14314468)
-bones/9/rotation = Quaternion(0.99431443, -0.034149908, 0.06984487, -0.07276333)
-bones/9/scale = Vector3(0.99999857, 0.95955694, 0.9999919)
-bones/11/position = Vector3(0, 0, -0.12479295)
-bones/13/rotation = Quaternion(-0.002886673, 0, 0, 0.9999959)
-bones/20/rotation = Quaternion(0.9993774, 0.022912309, -0.024392486, -0.011169467)
-bones/20/scale = Vector3(0.99680084, 0.9968012, 0.9968005)
-bones/21/rotation = Quaternion(0.25605452, 9.4626645e-05, 2.9514626e-05, 0.96666235)
-bones/21/scale = Vector3(0.99854076, 0.99854094, 0.998541)
-bones/22/rotation = Quaternion(-0.5400849, -0.01580001, 0.018179124, 0.8412658)
-bones/22/scale = Vector3(1.0048211, 1.0048208, 1.0048206)
-bones/23/rotation = Quaternion(-0.053457815, 0.92094153, -0.38533086, -0.023002503)
-bones/27/scale = Vector3(1.004821, 1.0048207, 1.0048211)
-bones/29/rotation = Quaternion(-2.4029989e-08, -0.008360164, 1.6313503e-08, 0.99996513)
-bones/29/scale = Vector3(1.0048211, 1.0048207, 1.0048208)
-bones/31/scale = Vector3(1.0032096, 1.0032095, 1.00321)
-bones/32/scale = Vector3(1.0032094, 1.0032092, 1.0032097)
-bones/34/rotation = Quaternion(0.9993774, -0.022912309, 0.024392484, -0.011169061)
-bones/34/scale = Vector3(0.996801, 0.9968014, 0.9968006)
-bones/35/rotation = Quaternion(0.2560557, -9.4645104e-05, -2.950161e-05, 0.96666205)
-bones/35/scale = Vector3(0.9985409, 0.99854106, 0.9985412)
-bones/36/rotation = Quaternion(-0.5400855, 0.015800016, -0.018179132, 0.84126544)
-bones/36/scale = Vector3(1.0048208, 1.0048208, 1.0048205)
-bones/37/rotation = Quaternion(0.05345781, 0.92094153, -0.38533086, 0.023002502)
-bones/41/scale = Vector3(1.0048208, 1.0048206, 1.004821)
-bones/43/rotation = Quaternion(-2.6282327e-08, 0.008360203, 3.555396e-09, 0.99996513)
-bones/43/scale = Vector3(1.0048208, 1.0048205, 1.0048205)
-bones/45/scale = Vector3(1.0032095, 1.0032092, 1.00321)
-bones/46/scale = Vector3(1.0032092, 1.0032091, 1.0032098)
-bones/56/rotation = Quaternion(-0.6550339, -0.03549711, 0.008211717, 0.7547206)
-bones/57/rotation = Quaternion(-0.103383586, 0.0033878044, 0.00035030767, 0.99463576)
-bones/57/scale = Vector3(0.9968008, 0.99680096, 0.99680054)
-bones/58/rotation = Quaternion(0.25605452, 9.462804e-05, 2.9514667e-05, 0.96666235)
-bones/58/scale = Vector3(0.99854076, 0.998541, 0.99854106)
-bones/59/rotation = Quaternion(0.99937576, 0.022913253, -0.024461428, -0.011167888)
-bones/61/rotation = Quaternion(0.99937576, 0.022913244, -0.024461225, -0.011167845)
-bones/61/scale = Vector3(1.0015707, 0.9968663, 1.0015709)
-bones/63/rotation = Quaternion(0.2560558, 0.0001250044, 2.1278522e-05, 0.966662)
-bones/63/scale = Vector3(1.000762, 0.99733645, 1.0019166)
-bones/64/rotation = Quaternion(1.7389315e-08, 0.0007634902, -2.4114756e-08, 0.9999997)
-bones/65/rotation = Quaternion(-0.54032826, -0.016250538, 0.017900951, 0.841107)
-bones/65/scale = Vector3(0.99782854, 0.9985177, 1.0036813)
-bones/66/rotation = Quaternion(-0.05344969, 0.9210504, -0.3850721, -0.022994466)
-bones/75/rotation = Quaternion(-0.6550339, 0.035497103, -0.008211715, 0.7547206)
-bones/76/rotation = Quaternion(-0.10338385, -0.0033877974, -0.0003503155, 0.9946357)
-bones/76/scale = Vector3(0.9968009, 0.996801, 0.99680054)
-bones/77/rotation = Quaternion(0.25605568, -9.464614e-05, -2.9500985e-05, 0.96666205)
-bones/77/scale = Vector3(0.9985409, 0.9985409, 0.99854106)
-bones/78/rotation = Quaternion(0.9993758, -0.022913251, 0.024461387, -0.011167495)
-bones/80/rotation = Quaternion(0.9993758, -0.022913305, 0.024461202, -0.011167472)
-bones/80/scale = Vector3(1.0015706, 0.99686635, 1.0015707)
-bones/82/rotation = Quaternion(0.25605705, -0.00012504833, -2.1235772e-05, 0.96666175)
-bones/82/scale = Vector3(1.0007622, 0.99733615, 1.0019168)
-bones/83/rotation = Quaternion(3.998393e-08, -0.00076348335, 2.8960168e-08, 0.99999976)
-bones/84/rotation = Quaternion(-0.5403288, 0.016250584, -0.017900912, 0.84110665)
-bones/84/scale = Vector3(0.99782836, 0.9985177, 1.0036817)
-bones/85/rotation = Quaternion(0.05344975, 0.92105037, -0.3850722, 0.022994451)
-bones/93/rotation = Quaternion(-0.002886673, 0, 0, 0.9999959)
-bones/95/rotation = Quaternion(-0.0062961625, -1.19206895e-07, 7.5049295e-10, 0.9999803)
-bones/96/rotation = Quaternion(0.0014439699, -8.1986e-14, -3.441763e-10, 0.99999905)
-bones/97/rotation = Quaternion(-0.71336097, -2.4786953e-19, -1.717185e-16, 0.7007969)
-bones/99/rotation = Quaternion(-0.7079163, 8.419702e-08, 8.439014e-08, 0.70629644)
-bones/103/rotation = Quaternion(-0.01914965, -1.2034738e-16, -1.2248999e-16, 0.99981666)
-bones/107/rotation = Quaternion(-0.3476461, 0.65117925, -0.4690505, 0.48487055)
-bones/117/rotation = Quaternion(1.3703294e-07, -0.0003910445, 5.112554e-08, 1)
-bones/122/rotation = Quaternion(0.02420565, 0.73774064, -0.6487047, 0.18529764)
-bones/126/rotation = Quaternion(-0.022883588, -0.69099724, 0.7078478, -0.14474362)
-bones/127/rotation = Quaternion(-0.20329157, -0.015495361, -0.003217768, 0.9789904)
-bones/127/scale = Vector3(0.98997784, 0.9899785, 0.9899781)
-bones/128/rotation = Quaternion(0.39639473, -3.190778e-07, -2.9548687e-08, 0.9180803)
-bones/129/rotation = Quaternion(-0.34782586, 0.65099376, -0.46891704, 0.48511973)
-bones/131/rotation = Quaternion(-0.3478257, 0.65099394, -0.468917, 0.48511964)
-bones/132/rotation = Quaternion(-1.0643318e-08, 0.0003854918, 3.4290817e-08, 1)
-bones/133/rotation = Quaternion(0.16463396, 0.0003849923, -6.445425e-05, 0.98635465)
-bones/137/rotation = Quaternion(0.34764615, 0.6511793, -0.46905047, -0.48487043)
-bones/147/rotation = Quaternion(-1.5524118e-07, 0.00039112402, 1.8280208e-08, 1)
-bones/152/rotation = Quaternion(-0.024205722, 0.7377406, -0.64870477, -0.18529756)
-bones/156/rotation = Quaternion(0.022883624, -0.6909972, 0.7078479, 0.14474362)
-bones/157/rotation = Quaternion(-0.20329165, 0.0154952565, 0.003217814, 0.9789904)
-bones/157/scale = Vector3(0.98997813, 0.9899782, 0.9899779)
-bones/158/rotation = Quaternion(0.39639503, 3.3806486e-07, -3.975543e-08, 0.91808003)
-bones/159/rotation = Quaternion(0.3478258, 0.6509939, -0.46891707, -0.48511964)
-bones/161/rotation = Quaternion(0.3478258, 0.6509939, -0.46891707, -0.48511967)
-bones/162/rotation = Quaternion(-2.2344992e-08, -0.00038546007, 3.3267632e-08, 1)
-bones/163/rotation = Quaternion(0.16463399, -0.0003850716, 6.42755e-05, 0.98635465)
-bones/178/position = Vector3(0.09557043, 0.39370364, -0.33098707)
-bones/178/rotation = Quaternion(-0.7081276, 3.7161527e-09, 6.9707213e-09, 0.7060845)
-bones/183/position = Vector3(-0.09557029, 0.39370358, -0.33098713)
-bones/183/rotation = Quaternion(-0.7081276, -3.6155599e-09, 5.4451173e-11, 0.7060845)
-bones/188/rotation = Quaternion(0.011997939, 0, 0, 0.9999281)
-bones/192/rotation = Quaternion(0.011997939, 0, 0, 0.9999281)
-bones/195/rotation = Quaternion(0.9041653, 0.036169782, -0.015965894, 0.42534912)
-bones/197/position = Vector3(0.086946815, 0.10881246, 0.24462654)
-bones/202/rotation = Quaternion(0.011997939, 0, 0, 0.9999281)
-bones/206/rotation = Quaternion(0.011997939, 0, 0, 0.9999281)
-bones/209/rotation = Quaternion(0.9041653, -0.036169782, 0.015965894, 0.42534912)
-bones/211/position = Vector3(-0.086946815, 0.10881246, 0.24462654)
-
-[node name="parachute" parent="Anemone/Anemone" parent_id_path=PackedInt32Array(356527856, 310442228) index="2" unique_id=592596698]
-visible = false
-
-[node name="CSGBox3D" type="CSGBox3D" parent="." unique_id=361633745]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.99, 0, -1.9810934)
-use_collision = true
-size = Vector3(34, 1, 18.227814)
-
-[node name="CSGBox3D2" type="CSGBox3D" parent="." unique_id=340998938]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.1984057, 2.7086096, -8.198219)
-use_collision = true
-size = Vector3(5.704707, 6, 4.7634573)
-
-[node name="CSGBox3D3" type="CSGBox3D" parent="." unique_id=1749626026]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.5026865, 2.2432861, -0.73527193)
-use_collision = true
-size = Vector3(4, 4, 3)
-
-[node name="CSGBox3D4" type="CSGBox3D" parent="." unique_id=475384494]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.4973135, 0.74328613, 2.264728)
-use_collision = true
-size = Vector3(4, 1, 3)
+[node name="GreyBoxTest" parent="." unique_id=2072986477 instance=ExtResource("2_ckhy6")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.0019059181, -2.3841858e-07, -0.0029921532)
 
 [node name="DebugCanvas" type="CanvasLayer" parent="." unique_id=1876224566]
 
@@ -211,20 +59,120 @@ offset_left = 1529.0
 offset_top = 11.0
 offset_right = 1908.0
 offset_bottom = 75.0
+theme_override_colors/font_shadow_color = Color(0, 0, 0, 0.6313726)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 5
 theme_override_font_sizes/font_size = 27
 text = "CurrentState:"
 script = ExtResource("4_c3mwy")
-state_machine = NodePath("../../Anemone/StateMachine")
+state_machine = NodePath("../../Adonis/StateMachine")
 
-[node name="CSGPolygon3D" type="CSGPolygon3D" parent="." unique_id=94829117]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5, 4, -5)
-use_collision = true
-polygon = PackedVector2Array(0, -4, 0, 2, 11, -4)
-depth = 6.22
+[node name="OmniLight3D" type="OmniLight3D" parent="." unique_id=91459907]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 5.9935017, 9.380167, -3.2463636)
+light_color = Color(0.55732435, 0.7862595, 0.9466284, 1)
+light_energy = 3.6
+shadow_enabled = true
+omni_range = 48.161
 
-[node name="Path3D" type="Path3D" parent="." unique_id=1375883394]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 9, 0, 0)
-curve = SubResource("Curve3D_c3mwy")
+[node name="Camera" type="Node3D" parent="." unique_id=1166386030 node_paths=PackedStringArray("phantom_camera")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.2645721, 1.4349694, 4.3043184)
+script = ExtResource("3_ckhy6")
+phantom_camera = NodePath("PhantomCamera3D")
+max_spring_length = 15.0
+min_vertical_rotation = -15.0
+max_vertical_rotation = -60.0
+rotation_speed = 120.0
 
-[editable path="Anemone"]
-[editable path="Anemone/Anemone"]
+[node name="PhantomCamera3D" type="Node3D" parent="Camera" unique_id=2006059496 node_paths=PackedStringArray("follow_target")]
+transform = Transform3D(0.99993116, -0.007526614, 0.009001727, 0, 0.76716506, 0.6414497, -0.011733755, -0.6414056, 0.76711226, -2.0327232, 0.68549085, 1.7126398)
+script = ExtResource("1_vnucn")
+follow_mode = 6
+follow_target = NodePath("../../Adonis")
+tween_resource = SubResource("Resource_dun2r")
+follow_damping = true
+follow_damping_value = Vector3(0.2, 0.2, 0.2)
+follow_distance = 2.51
+vertical_rotation_offset = 0.6963863715457371
+spring_length = 2.51
+align_transform_with_view = Callable()
+align_position_with_view = Callable()
+align_rotation_with_view = Callable()
+metadata/_custom_type_script = "uid://csjccrhj5wnx7"
+
+[node name="Camera3D" type="Camera3D" parent="Camera/PhantomCamera3D" unique_id=2007781084]
+physics_interpolation_mode = 1
+transform = Transform3D(0.99993116, -0.007526614, 0.009001727, 0, 0.76716506, 0.6414497, -0.011733755, -0.6414056, 0.76711226, 0.23184896, 2.1204603, 6.016958)
+top_level = true
+
+[node name="PhantomCameraHost" type="Node" parent="Camera/PhantomCamera3D/Camera3D" unique_id=1903573326]
+process_priority = 300
+process_physics_priority = 300
+script = ExtResource("7_r3lo5")
+
+[node name="JumpLedge3D" parent="." unique_id=272841559 instance=ExtResource("8_qtxxq")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.9805784, 2.7248936, 2.3661118)
+debug_curve_color = Color(1, 1, 1, 1)
+line_width = 0.12
+arrow_size = 0.645
+curve_segments = 23
+
+[node name="TargetMarker" parent="JumpLedge3D" index="1" unique_id=1233340148]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.6261635, 0.70876527, -0.7051778)
+
+[node name="ApexMarker" parent="JumpLedge3D" index="2" unique_id=1770217343]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.6938171, 2.2268763, -0.6125119)
+
+[node name="JumpLedge3D3" parent="." unique_id=992294944 instance=ExtResource("8_qtxxq")]
+transform = Transform3D(0.0054042833, 0, -0.9999854, 0, 1, 0, 0.9999854, 0, 0.0054042833, 1.9426184, 6.2461123, -7.9332123)
+debug_curve_color = Color(1, 1, 1, 1)
+line_width = 0.12
+arrow_size = 0.645
+curve_segments = 23
+
+[node name="TargetMarker" parent="JumpLedge3D3" index="1" unique_id=1233340148]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 6.460536, -5.687281, -0.7051778)
+
+[node name="ApexMarker" parent="JumpLedge3D3" index="2" unique_id=1770217343]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 3.3515637, 2.2268763, -0.6125119)
+
+[node name="JumpLedge3D2" parent="." unique_id=1441433045 instance=ExtResource("8_qtxxq")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 8.068069, 2.682919, 2.465033)
+debug_curve_color = Color(0.72437525, 0, 0.08234929, 1)
+line_width = 0.1
+arrow_size = 0.37
+curve_segments = 30
+
+[node name="CollisionShape3D" parent="JumpLedge3D2/StartArea" parent_id_path=PackedInt32Array(1441433045, 1388835361) index="0" unique_id=434222230]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.4463043, 1.5020161, -0.17236328)
+
+[node name="TargetMarker" parent="JumpLedge3D2" index="1" unique_id=1233340148]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.09084034, -0.5351851, 0.32794547)
+
+[node name="ApexMarker" parent="JumpLedge3D2" index="2" unique_id=1770217343]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 1.3539562, 2.4222794, 0.24139118)
+
+[node name="Ladder3D" type="Node3D" parent="." unique_id=498170869]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -2.1560106, 0.4922179, 1.103816)
+script = ExtResource("9_8fnbn")
+ladder_height = 3.745
+
+[node name="ladder" parent="Ladder3D" unique_id=246115925 instance=ExtResource("9_qtxxq")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.5180552)
+
+[node name="MainDetectArea" type="Area3D" parent="Ladder3D" unique_id=1470513046]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -0.27674842)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Ladder3D/MainDetectArea" unique_id=817879436]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0029520988, 0.5606351, 0.43436265)
+shape = SubResource("BoxShape3D_fc8m0")
+
+[node name="TopDetectArea" type="Area3D" parent="Ladder3D" unique_id=1216621706]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.623467, -0.8412986)
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Ladder3D/TopDetectArea" unique_id=774477287]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0029520988, 0.5606351, 0.43436265)
+shape = SubResource("BoxShape3D_fc8m0")
+
+[editable path="JumpLedge3D"]
+[editable path="JumpLedge3D3"]
+[editable path="JumpLedge3D2"]
