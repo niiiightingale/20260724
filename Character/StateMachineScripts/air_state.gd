@@ -3,7 +3,7 @@ extends State
 
 func enter() -> void:
 	# 告诉 AnimationTree 接入 AirState 混合节点
-	player.travel_to_anim("AirState")
+	player.animation_controller.travel_to_anim("AirState")
 
 func physics_update(delta: float) -> void:
 	# 1. 重力应用（根据上升/下落选择对应重力，手感更扎实）
@@ -15,11 +15,6 @@ func physics_update(delta: float) -> void:
 	# 条件 1：踩到地面 -> 切换到落地缓冲 Land
 	if player.is_grounded and player.velocity.y <= 0:
 		state_machine.transition_to("land")
-		return
-
-	# 条件 2：按下滑翔键 -> 切换到滑翔 Glide
-	if player.glide_just_pressed:
-		state_machine.transition_to("glide")
 		return
 
 	# --- 空中水平移动控制 ---

@@ -1,0 +1,108 @@
+[gd_scene format=3 uid="uid://c10gwhgskqwhu"]
+
+[ext_resource type="PackedScene" uid="uid://kac5y0xrpaao" path="res://Character/Amy/Amy.glb" id="1_5ief2"]
+[ext_resource type="Script" uid="uid://4ewrm6nn4gc2" path="res://Character/Adonis/player.gd" id="1_6v8vw"]
+[ext_resource type="Script" uid="uid://dfm0whua4i2yw" path="res://Character/StateMachineScripts/state_machine.gd" id="3_6v8vw"]
+[ext_resource type="Script" uid="uid://40isq80ac72d" path="res://Character/StateMachineScripts/player_grounded_state.gd" id="4_6v8vw"]
+[ext_resource type="Script" uid="uid://cfsippngnvwj8" path="res://Character/Adonis/animation_controller.gd" id="8_6v8vw"]
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_c2iot"]
+animation = &"Standing Idle"
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_dmj1e"]
+animation = &"Walk"
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_51m8v"]
+animation = &"Run"
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_1ymrc"]
+animation = &"Fast Run"
+
+[sub_resource type="AnimationNodeBlendSpace1D" id="AnimationNodeBlendSpace1D_bgjw0"]
+min_space = 0.0
+max_space = 3.0
+sync_mode = 2
+blend_point_0/node = SubResource("AnimationNodeAnimation_c2iot")
+blend_point_0/pos = 0.0
+blend_point_0/name = &"Standing Idle"
+blend_point_1/node = SubResource("AnimationNodeAnimation_dmj1e")
+blend_point_1/pos = 1.0
+blend_point_1/name = &"Walk"
+blend_point_2/node = SubResource("AnimationNodeAnimation_51m8v")
+blend_point_2/pos = 2.0
+blend_point_2/name = &"Run"
+blend_point_3/node = SubResource("AnimationNodeAnimation_1ymrc")
+blend_point_3/pos = 3.0
+blend_point_3/name = &"Fast Run"
+
+[sub_resource type="AnimationNodeTimeScale" id="AnimationNodeTimeScale_8rl1n"]
+
+[sub_resource type="AnimationNodeBlendTree" id="AnimationNodeBlendTree_mukq5"]
+graph_offset = Vector2(204.08476, 27.11089)
+nodes/output/position = Vector2(896, 160)
+nodes/Locomotion/node = SubResource("AnimationNodeBlendSpace1D_bgjw0")
+nodes/Locomotion/position = Vector2(400, 144)
+nodes/TimeScale/node = SubResource("AnimationNodeTimeScale_8rl1n")
+nodes/TimeScale/position = Vector2(640, 144)
+node_connections = [&"output", 0, &"TimeScale", &"TimeScale", 0, &"Locomotion"]
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_igeid"]
+advance_mode = 2
+
+[sub_resource type="AnimationNodeStateMachine" id="AnimationNodeStateMachine_ux0fx"]
+states/End/position = Vector2(657.6, 114.4)
+states/LocomotionTree/node = SubResource("AnimationNodeBlendTree_mukq5")
+states/LocomotionTree/position = Vector2(462.1, 160.1)
+states/Start/position = Vector2(213.59999, 150.40001)
+transitions = ["Start", "LocomotionTree", SubResource("AnimationNodeStateMachineTransition_igeid")]
+graph_offset = Vector2(-35, -39)
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_hxb6m"]
+radius = 0.20263672
+height = 1.3911133
+
+[node name="Amy" type="CharacterBody3D" unique_id=1146653940 node_paths=PackedStringArray("anim_player", "ground_raycast", "visual_mesh", "skeleton")]
+script = ExtResource("1_6v8vw")
+anim_player = NodePath("Amy/AnimationPlayer")
+ground_raycast = NodePath("GroundRayCast")
+visual_mesh = NodePath("Amy")
+skeleton = NodePath("Amy/Amy/Skeleton3D")
+run_speed = 9.59
+rotation_speed = 4.0
+
+[node name="Amy" parent="." unique_id=695865094 instance=ExtResource("1_5ief2")]
+
+[node name="Amy" parent="Amy" index="0" unique_id=879305284]
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 0, 0, 0)
+
+[node name="StateMachine" type="Node" parent="." unique_id=1003084377]
+script = ExtResource("3_6v8vw")
+
+[node name="Grounded_State" type="Node" parent="StateMachine" unique_id=394035157]
+script = ExtResource("4_6v8vw")
+blend_acceleration = 3.0
+
+[node name="AnimationTree" type="AnimationTree" parent="." unique_id=827154993]
+root_node = NodePath("../Amy")
+root_motion_track = NodePath("Amy/Skeleton3D:root")
+callback_mode_process = 0
+tree_root = SubResource("AnimationNodeStateMachine_ux0fx")
+anim_player = NodePath("../Amy/AnimationPlayer")
+parameters/LocomotionTree/Locomotion/blend_position = 0.0
+parameters/LocomotionTree/TimeScale/scale = 1.0
+
+[node name="AnimationController" type="Node" parent="." unique_id=1968076192]
+script = ExtResource("8_6v8vw")
+
+[node name="RootMotionView" type="RootMotionView" parent="." unique_id=420508160]
+animation_path = NodePath("../AnimationTree")
+radius = 2.87
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=1420917145]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.7072754, 0)
+shape = SubResource("CapsuleShape3D_hxb6m")
+
+[node name="GroundRayCast" type="RayCast3D" parent="." unique_id=1679446969]
+enabled = false
+
+[editable path="Amy"]

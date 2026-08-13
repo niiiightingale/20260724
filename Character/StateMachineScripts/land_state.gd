@@ -6,7 +6,7 @@ var timer: float = 0.0
 
 func enter() -> void:
 	timer = land_time
-	player.travel_to_anim("land")
+	player.animation_controller.travel_to_anim("land")
 
 func physics_update(delta: float) -> void:
 	timer -= delta

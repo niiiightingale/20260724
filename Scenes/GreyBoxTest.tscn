@@ -38,6 +38,12 @@ use_collision = true
 polygon = PackedVector2Array(0, -4, 0, 2, 11, -4)
 depth = 6.22
 
+[node name="CSGPolygon3D3" type="CSGPolygon3D" parent="." unique_id=2018570980]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1.5104587, 2.6815367, -0.159863)
+use_collision = true
+polygon = PackedVector2Array(0, -4, 0, 2, 11, -4)
+depth = 1.83
+
 [node name="CSGPolygon3D2" type="CSGPolygon3D" parent="." unique_id=521083848]
 transform = Transform3D(-0.99999213, 0, 0.0039667105, 0, 1, 0, -0.0039667105, 0, -0.99999213, 5.3942866, 4, 0.6680393)
 use_collision = true
