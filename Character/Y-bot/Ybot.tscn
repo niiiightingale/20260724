@@ -1,0 +1,158 @@
+[gd_scene format=3 uid="uid://klhpg63jfyeq"]
+
+[ext_resource type="Script" uid="uid://4ewrm6nn4gc2" path="res://Character/Adonis/player.gd" id="1_0olno"]
+[ext_resource type="PackedScene" uid="uid://kigl1fxx03n3" path="res://Character/Y-bot/ybot.glb" id="1_egln5"]
+[ext_resource type="Script" uid="uid://dfm0whua4i2yw" path="res://Character/StateMachineScripts/state_machine.gd" id="2_0olno"]
+[ext_resource type="Script" uid="uid://cfsippngnvwj8" path="res://Character/Adonis/animation_controller.gd" id="4_vb3l1"]
+[ext_resource type="Script" uid="uid://bftvs0s3e1100" path="res://Character/StateMachineScripts/idle_state.gd" id="5_vb3l1"]
+[ext_resource type="Script" uid="uid://drgbp2fvhl25s" path="res://Character/StateMachineScripts/walk_state.gd" id="6_m5n7r"]
+[ext_resource type="Script" uid="uid://bd06q2syxvxxo" path="res://Character/Y-bot/stop_state.gd" id="6_vb3l1"]
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_mj0go"]
+animation = &"Idle"
+
+[sub_resource type="AnimationNodeAnimation" id="AnimationNodeAnimation_vb3l1"]
+animation = &"Walk"
+advance_on_start = true
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_m5n7r"]
+advance_mode = 2
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_wgtg0"]
+xfade_time = 0.2
+reset = false
+
+[sub_resource type="AnimationNodeStateMachineTransition" id="AnimationNodeStateMachineTransition_mj0go"]
+xfade_time = 0.3
+reset = false
+
+[sub_resource type="AnimationNodeStateMachine" id="AnimationNodeStateMachine_ffswy"]
+states/End/position = Vector2(657.6, 114.4)
+states/Idle/node = SubResource("AnimationNodeAnimation_mj0go")
+states/Idle/position = Vector2(345.5, 169.7)
+states/Start/position = Vector2(213.59999, 150.40001)
+states/Walk/node = SubResource("AnimationNodeAnimation_vb3l1")
+states/Walk/position = Vector2(493.5, 176.90001)
+transitions = ["Start", "Idle", SubResource("AnimationNodeStateMachineTransition_m5n7r"), "Idle", "Walk", SubResource("AnimationNodeStateMachineTransition_wgtg0"), "Walk", "Idle", SubResource("AnimationNodeStateMachineTransition_mj0go")]
+graph_offset = Vector2(38, 53)
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_u8ub1"]
+radius = 0.15
+height = 1.7435547
+
+[node name="Ybot" type="CharacterBody3D" unique_id=1317025642 node_paths=PackedStringArray("nav_agent", "anim_player", "ground_raycast", "visual_mesh", "skeleton")]
+script = ExtResource("1_0olno")
+nav_agent = NodePath("NavigationAgent3D")
+anim_player = NodePath("ybot/AnimationPlayer")
+ground_raycast = NodePath("GroundRayCast")
+visual_mesh = NodePath("ybot")
+skeleton = NodePath("ybot/ybot/Skeleton3D")
+
+[node name="ybot" parent="." unique_id=1300197706 instance=ExtResource("1_egln5")]
+
+[node name="ybot" parent="ybot" index="0" unique_id=8181312]
+transform = Transform3D(-1, 0, -8.742278e-08, 0, 1, 0, 8.742278e-08, 0, -1, 0, 0, 0)
+
+[node name="Skeleton3D" parent="ybot/ybot" index="0" unique_id=2838045]
+bones/1/position = Vector3(-0.0007555256, 0.9273552, 0.000720834)
+bones/1/rotation = Quaternion(0.026988652, 0.06142547, -0.01722365, 0.9975981)
+bones/2/rotation = Quaternion(-0.06319865, -0.010115626, 0.0066949604, 0.9979273)
+bones/3/rotation = Quaternion(-0.004778882, -0.022343459, 0.01095943, 0.99967885)
+bones/4/rotation = Quaternion(0.05272655, -0.02166861, 0.0122474935, 0.99829876)
+bones/5/rotation = Quaternion(-0.008387753, 0.005512674, -0.016662205, 0.9998108)
+bones/6/rotation = Quaternion(0.017934276, -0.0045245592, 0.0174633, 0.9996764)
+bones/8/position = Vector3(0.061058003, 0.09107346, 0.0075732986)
+bones/8/rotation = Quaternion(-0.6117989, -0.41690776, 0.52480537, -0.42008278)
+bones/9/rotation = Quaternion(0.37681416, -0.028628636, 0.11660847, 0.9184737)
+bones/10/position = Vector3(-1.34362845e-05, 0.2740485, -1.4729226e-05)
+bones/10/rotation = Quaternion(0.07208923, 0.13456582, 0.40085953, 0.90333104)
+bones/11/rotation = Quaternion(-0.15154098, 0.089942016, 0.09345275, 0.9799043)
+bones/12/rotation = Quaternion(0.3027717, -0.1356421, 0.15229273, 0.9309874)
+bones/13/rotation = Quaternion(-0.022716202, -0.00050426926, -0.06102779, 0.9978774)
+bones/14/position = Vector3(5.5199434e-06, 0.04383546, 2.4425264e-05)
+bones/14/rotation = Quaternion(4.3362303e-07, -1.2600967e-07, -1.02445476e-07, 1)
+bones/16/rotation = Quaternion(0.32683763, 0.0036995232, 0.044204686, 0.944039)
+bones/17/rotation = Quaternion(0.6072254, -0.012245166, 0.05279229, 0.79267925)
+bones/18/rotation = Quaternion(8.238276e-07, -4.257563e-09, -2.9102633e-08, 1)
+bones/20/rotation = Quaternion(0.48606476, -0.029315252, 0.08246207, 0.86952966)
+bones/21/rotation = Quaternion(0.7359632, -0.0052754357, 0.07547397, 0.6727809)
+bones/22/rotation = Quaternion(-6.743867e-07, -6.693878e-08, -4.7928125e-08, 1)
+bones/24/rotation = Quaternion(0.49716753, -0.09270118, 0.029087938, 0.8621977)
+bones/25/rotation = Quaternion(0.7537346, 0.005657432, 0.05126543, 0.6551519)
+bones/26/rotation = Quaternion(-2.1599103e-06, 1.3333555e-07, 2.6086798e-07, 1)
+bones/28/rotation = Quaternion(0.5693332, -0.13548546, 0.022163818, 0.8105629)
+bones/29/rotation = Quaternion(0.69879967, 0.02786158, 0.048572946, 0.71312237)
+bones/30/rotation = Quaternion(3.976435e-06, 4.8899375e-07, 8.411024e-07, 1)
+bones/32/rotation = Quaternion(0.57122, -0.4530671, 0.59342223, 0.34101045)
+bones/33/rotation = Quaternion(0.45270213, -0.09104236, 0.16104405, 0.8722597)
+bones/34/rotation = Quaternion(0.03739027, -0.18347597, -0.21479264, 0.958542)
+bones/35/position = Vector3(-2.0577134e-07, 0.27614477, 1.7317385e-05)
+bones/35/rotation = Quaternion(0.015550787, -0.114524625, 0.04914968, 0.99208194)
+bones/36/rotation = Quaternion(0.24147919, 0.15593171, -0.21299389, 0.93381304)
+bones/37/position = Vector3(-4.86335e-06, 0.047463853, 3.6536692e-06)
+bones/37/rotation = Quaternion(0.08071023, -0.17901902, 0.1819501, 0.9635)
+bones/38/position = Vector3(1.9855609e-06, 0.04380583, -1.956659e-05)
+bones/38/rotation = Quaternion(-1.1679647e-06, 5.5896703e-07, 1.6950081e-07, 1)
+bones/40/rotation = Quaternion(0.3206223, 0.022209087, 0.007117252, 0.94692004)
+bones/41/rotation = Quaternion(0.5255078, 0.026557826, -0.029735291, 0.8498541)
+bones/42/position = Vector3(1.2765257e-05, 0.034144506, 1.9626914e-06)
+bones/42/rotation = Quaternion(2.8309496e-06, 1.0908294e-08, 1.770527e-09, 1)
+bones/44/rotation = Quaternion(0.38786858, 0.040333062, -0.008640049, 0.92079127)
+bones/45/rotation = Quaternion(0.5683481, 0.03390447, -0.041337185, 0.82104945)
+bones/46/rotation = Quaternion(-1.0461536e-06, 7.634619e-09, -1.1747679e-07, 1)
+bones/48/rotation = Quaternion(0.37791926, 0.013073754, -0.031608116, 0.92520654)
+bones/49/rotation = Quaternion(0.6178204, -0.016909271, -0.057285354, 0.78404754)
+bones/50/rotation = Quaternion(7.236107e-07, 1.1638203e-07, 2.244244e-07, 1)
+bones/52/rotation = Quaternion(0.34568653, 0.0036216849, -0.055086456, 0.9367248)
+bones/53/rotation = Quaternion(0.6601454, -0.040987033, -0.084032856, 0.7452964)
+bones/54/rotation = Quaternion(1.2210829e-06, 1.4076376e-08, -2.3468237e-07, 1)
+bones/56/rotation = Quaternion(0.08010488, 0.0191211, 0.9940827, -0.07083266)
+bones/57/rotation = Quaternion(-0.49696118, 0.060884938, 0.00512102, 0.8656192)
+bones/58/rotation = Quaternion(0.4197291, 0.05294647, 0.07466259, 0.9030226)
+bones/59/rotation = Quaternion(0.35353935, -0.07004103, -0.023966713, 0.9324858)
+bones/61/rotation = Quaternion(-0.04958585, 0.317641, 0.9468257, -0.012910396)
+bones/62/rotation = Quaternion(-0.285924, -0.0035230515, 0.0049999603, 0.9582328)
+bones/63/rotation = Quaternion(0.5134096, -0.025617573, -0.036070153, 0.8570026)
+bones/64/rotation = Quaternion(0.2689588, 0.037785288, 0.010763907, 0.96235)
+
+[node name="StateMachine" type="Node" parent="." unique_id=839467974]
+script = ExtResource("2_0olno")
+
+[node name="Idle_State" type="Node" parent="StateMachine" unique_id=858281219]
+script = ExtResource("5_vb3l1")
+
+[node name="Walk_State" type="Node" parent="StateMachine" unique_id=79559866]
+script = ExtResource("6_m5n7r")
+
+[node name="Stop_State" type="Node" parent="StateMachine" unique_id=461436219]
+script = ExtResource("6_vb3l1")
+stop_duration = 0.3
+
+[node name="AnimationTree" type="AnimationTree" parent="." unique_id=2135264313]
+root_node = NodePath("../ybot")
+root_motion_track = NodePath("ybot/Skeleton3D:root")
+callback_mode_process = 0
+tree_root = SubResource("AnimationNodeStateMachine_ffswy")
+anim_player = NodePath("../ybot/AnimationPlayer")
+
+[node name="AnimationController" type="Node" parent="." unique_id=634309477]
+script = ExtResource("4_vb3l1")
+
+[node name="RootMotionView" type="RootMotionView" parent="." unique_id=2098625372]
+animation_path = NodePath("../AnimationTree")
+radius = 2.87
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="." unique_id=630549076]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.8770264, 0)
+shape = SubResource("CapsuleShape3D_u8ub1")
+
+[node name="GroundRayCast" type="RayCast3D" parent="." unique_id=1733273515]
+enabled = false
+
+[node name="NavigationAgent3D" type="NavigationAgent3D" parent="." unique_id=582109004]
+path_desired_distance = 0.5
+target_desired_distance = 0.1
+debug_enabled = true
+debug_use_custom = true
+
+[editable path="ybot"]

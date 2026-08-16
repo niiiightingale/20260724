@@ -1,5 +1,5 @@
 # player.gd
-# 角色主控脚本：负责节点装配、依赖注入、视角转译及全局重力物理管控
+# 角色主控脚本：负责节点装配、依赖注入、鼠标射线拾取、寻路目标下发及全局重力物理管控
 extends CharacterBody3D
 class_name Player
 
@@ -7,6 +7,7 @@ class_name Player
 @onready var anim_tree: AnimationTree = $AnimationTree
 @onready var state_machine: StateMachine = $StateMachine
 @onready var animation_controller: AnimationController = $AnimationController
+@export var nav_agent: NavigationAgent3D
 @export var anim_player: AnimationPlayer
 @export var ground_raycast: RayCast3D
 @export var visual_mesh: Node3D
@@ -17,18 +18,15 @@ class_name Player
 # --- 统一参数配置区 (Inspector 可视化调节) ---
 # ==========================================
 @export_group("移动与表现参数")
-@export var run_speed: float = 6.0
 @export var rotation_speed: float = 12.0 ## 角色根节点转向平滑速度
-@export var anim_speed_scale: float = 1.0 ## 动画与位移全局播放速率系数 (1.0 为原速，1.2 为加速)
+@export var anim_speed_scale: float = 1.0 ## 动画与位移全局播放速率系数
 
 @export_group("物理与高程")
-@export var jump_velocity: float = 10.0
 @export var fall_gravity: float = 24.0
 
 # ==========================================
 # --- 实时运行数据与物理开关 ---
 # ==========================================
-var input_dir: Vector2 = Vector2.ZERO
 var move_direction: Vector3 = Vector3.ZERO
 var is_grounded: bool = false
 var is_gravity_enabled: bool = true ## 控制重力解算开关 (供状态节点控制)
@@ -48,41 +46,49 @@ func _ready() -> void:
 		state_machine.init(self)
 
 
+## 捕获未处理的鼠标点击输入并投射世界坐标射线
+func _unhandled_input(event: InputEvent) -> void:
+	if event is InputEventMouseButton:
+		var mouse_event: InputEventMouseButton = event as InputEventMouseButton
+		if mouse_event.button_index == MOUSE_BUTTON_LEFT and mouse_event.pressed:
+			_cast_ray_to_ground(mouse_event.position)
+
+
 func _physics_process(delta: float) -> void:
-	# 1. 收集玩家 2D 输入
-	input_dir = Input.get_vector("move_left", "move_right", "move_forward", "move_backward")
-	
-	# 2. 视角转译计算绝对世界移动方向
-	_update_move_direction()
-	
-	# 3. 维护接地状态供 StateMachine 消费
+	# 1. 维护接地状态供 StateMachine 消费
 	is_grounded = is_on_floor() or (ground_raycast != null and ground_raycast.is_colliding())
 	
-	# 4. 集中重力解算 (仅当重力开关开启且未在地面时施加)
+	# 2. 集中重力解算 (仅当重力开关开启且未在地面时施加)
 	if is_gravity_enabled and not is_on_floor():
 		velocity.y -= fall_gravity * delta
 		
-	# 5. 记录基础物理数据
+	# 3. 记录基础物理数据
 	vertical_velocity = velocity.y
 	horizontal_speed = Vector2(velocity.x, velocity.z).length()
 
 
-## 计算基于相机视角的绝对移动方向 (对齐 View Space 标准坐标)
-func _update_move_direction() -> void:
+## 向 3D 空间投射物理射线获取地面点击坐标并注入寻路代理
+func _cast_ray_to_ground(screen_pos: Vector2) -> void:
 	if camera == null:
-		move_direction = Vector3(input_dir.x, 0.0, input_dir.y).normalized()
 		return
+		
+	var from: Vector3 = camera.project_ray_origin(screen_pos)
+	var dir: Vector3 = camera.project_ray_normal(screen_pos)
+	var to: Vector3 = from + dir * 1000.0
+	
+	var space_state: PhysicsDirectSpaceState3D = get_world_3d().direct_space_state
+	var query: PhysicsRayQueryParameters3D = PhysicsRayQueryParameters3D.create(from, to)
+	
+	var result: Dictionary = space_state.intersect_ray(query)
+	if not result.is_empty():
+		var hit_position: Vector3 = result["position"]
+		set_nav_target(hit_position)
 
-	var cam_basis: Basis = camera.global_transform.basis
-	var forward: Vector3 = -cam_basis.z
-	forward.y = 0.0
-	forward = forward.normalized()
-	
-	var right: Vector3 = cam_basis.x
-	right.y = 0.0
-	right = right.normalized()
-	
-	move_direction = (right * input_dir.x + forward * -input_dir.y).normalized()
+
+## 下发寻路目标点给 NavigationAgent3D
+func set_nav_target(target: Vector3) -> void:
+	if nav_agent != null:
+		nav_agent.target_position = target
 
 
 ## 供外部/State 显式调用的转向辅助函数 (旋转 Player 物理根节点)
@@ -95,11 +101,11 @@ func rotate_towards_move_direction(delta: float) -> void:
 		)
 
 
-## ✨ 控制物理重力系统开关 (如攀爬/飞行状态设为 false，地面/空中状态设为 true)
+## 控制物理重力系统开关 (如攀爬/飞行状态设为 false，地面/空中状态设为 true)
 func set_gravity_enabled(enabled: bool) -> void:
 	is_gravity_enabled = enabled
 
 
-## ✨ 施加垂直脉冲速度 (供跳跃/冲刺等状态调用)
+## 施加垂直脉冲速度 (供跳跃/冲刺等状态调用)
 func apply_vertical_impulse(impulse: float) -> void:
 	velocity.y = impulse
