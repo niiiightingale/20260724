@@ -1,0 +1,22 @@
+[gd_scene format=3 uid="uid://c0g3v8h62ktpm"]
+
+[ext_resource type="Script" uid="uid://8r03ym6meu7d" path="res://001/SceneFunctionNodes/jump_ledge_3d.gd" id="1_mdg1q"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_fc8m0"]
+size = Vector3(0.76171875, 1.651123, 3.024414)
+
+[node name="JumpLedge3D" type="Node3D" unique_id=272841559]
+script = ExtResource("1_mdg1q")
+
+[node name="StartArea" type="Area3D" parent="." unique_id=1388835361]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="StartArea" unique_id=434222230]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.119140625, 0.32556152, -0.17236328)
+shape = SubResource("BoxShape3D_fc8m0")
+debug_color = Color(2.695322e-06, 0.65109295, 0.761007, 0.41960785)
+
+[node name="TargetMarker" type="Marker3D" parent="." unique_id=1233340148]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 4.5666513, 0.70876527, 0)
+
+[node name="ApexMarker" type="Marker3D" parent="." unique_id=1770217343]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 2.7521086, 1.6191964, 0)

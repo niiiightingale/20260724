@@ -1,0 +1,107 @@
+[gd_scene format=3 uid="uid://bsb0uugk0xavh"]
+
+[ext_resource type="PackedScene" uid="uid://c1amgbkdll6p7" path="res://player.glb" id="1_3ipfy"]
+[ext_resource type="Script" uid="uid://b7ey8b52s6b4a" path="res://beat_conducter.gd" id="1_24d08"]
+[ext_resource type="Script" uid="uid://cdua2lffipgmk" path="res://grid_manager.gd" id="1_g0d6c"]
+[ext_resource type="AudioStream" uid="uid://c7vsq1uwvqwid" path="res://ClassicClick.wav" id="2_170dk"]
+[ext_resource type="Script" uid="uid://brsl61r57sg6y" path="res://grid_visualizer_3d.gd" id="2_f5i44"]
+[ext_resource type="Script" uid="uid://d2i04kw5s6n84" path="res://beat_test_controller.gd" id="3_170dk"]
+[ext_resource type="Shader" uid="uid://c3is2r7xcewam" path="res://grid_floor.gdshader" id="3_hbe7s"]
+[ext_resource type="Script" uid="uid://bcrbsw7gosxne" path="res://grid_actor.gd" id="3_n0g3p"]
+[ext_resource type="Script" uid="uid://dhwyip2ko2sfp" path="res://player_grid_controller.gd" id="5_2qvp8"]
+[ext_resource type="PackedScene" uid="uid://cmwxd16u7yrif" path="res://beat_clock.tscn" id="5_g0d6c"]
+[ext_resource type="Script" uid="uid://by1w3b8tro2ds" path="res://grid_test_bench.gd" id="10_8hd61"]
+[ext_resource type="Script" uid="uid://dj6qjeeqqvxyd" path="res://npc_instruction_agent.gd" id="12_ebfx1"]
+[ext_resource type="PackedScene" uid="uid://boxfnxw7bqpqe" path="res://npc.glb" id="12_g1ltr"]
+
+[sub_resource type="Environment" id="Environment_fc8m0"]
+
+[sub_resource type="PlaneMesh" id="PlaneMesh_8hd61"]
+size = Vector2(8, 8)
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_8hd61"]
+render_priority = 0
+shader = ExtResource("3_hbe7s")
+shader_parameter/cell_size = Vector2(0.5, 0.5)
+shader_parameter/line_color = Color(0.4014819, 0.7749178, 0.9932212, 1)
+shader_parameter/base_color = Color(1, 1, 1, 1)
+shader_parameter/line_thickness = 0.10000000149012
+
+[node name="Root" type="Node3D" unique_id=122544262]
+
+[node name="Environment" type="Node3D" parent="." unique_id=1567062141]
+
+[node name="DirectionalLight3D" type="OmniLight3D" parent="Environment" unique_id=55598021]
+transform = Transform3D(0.70710677, -0.5, 0.50000006, 0, 0.7071068, 0.70710677, -0.7071068, -0.49999997, 0.5, 0, 3, -2)
+shadow_enabled = true
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="Environment" unique_id=1927874341]
+environment = SubResource("Environment_fc8m0")
+
+[node name="GridTestBench" type="Node3D" parent="." unique_id=672169902 node_paths=PackedStringArray("conductor", "grid_manager", "player_actor", "player_controller", "beat_clock", "npc_agent")]
+script = ExtResource("10_8hd61")
+conductor = NodePath("BeatTestController/BeatConducter")
+grid_manager = NodePath("GridManager")
+player_actor = NodePath("Player")
+player_controller = NodePath("Player/Controller")
+beat_clock = NodePath("BeatClock")
+npc_agent = NodePath("../NPC_Worker")
+
+[node name="GridManager" type="Node3D" parent="GridTestBench" unique_id=406423323]
+script = ExtResource("1_g0d6c")
+
+[node name="GridVisualizer3D" type="MeshInstance3D" parent="GridTestBench/GridManager" unique_id=717373919]
+mesh = SubResource("PlaneMesh_8hd61")
+surface_material_override/0 = SubResource("ShaderMaterial_8hd61")
+script = ExtResource("2_f5i44")
+
+[node name="Player" type="Node3D" parent="GridTestBench" unique_id=1271146666]
+script = ExtResource("3_n0g3p")
+
+[node name="player" parent="GridTestBench/Player" unique_id=1240373626 instance=ExtResource("1_3ipfy")]
+
+[node name="Controller" type="Node3D" parent="GridTestBench/Player" unique_id=24534962]
+script = ExtResource("5_2qvp8")
+
+[node name="BeatTestController" type="Node" parent="GridTestBench" unique_id=496158431 node_paths=PackedStringArray("conductor", "clock")]
+script = ExtResource("3_170dk")
+conductor = NodePath("BeatConducter")
+clock = NodePath("../BeatClock")
+
+[node name="BeatConducter" type="Node" parent="GridTestBench/BeatTestController" unique_id=21922394 node_paths=PackedStringArray("beat_timer", "click_audio")]
+script = ExtResource("1_24d08")
+beat_timer = NodePath("BeatTimer")
+click_audio = NodePath("ClickAudio")
+tolerance_sec = 0.4
+
+[node name="BeatTimer" type="Timer" parent="GridTestBench/BeatTestController/BeatConducter" unique_id=685802741]
+autostart = true
+
+[node name="ClickAudio" type="AudioStreamPlayer" parent="GridTestBench/BeatTestController/BeatConducter" unique_id=451682297]
+stream = ExtResource("2_170dk")
+autoplay = true
+
+[node name="BeatClock" parent="GridTestBench" unique_id=1396221 instance=ExtResource("5_g0d6c")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -3)
+
+[node name="CameraPivot" type="Node3D" parent="GridTestBench" unique_id=978416970]
+
+[node name="Camera3D" type="Camera3D" parent="GridTestBench/CameraPivot" unique_id=1126048168]
+transform = Transform3D(1, 0, 0, 0, 0.7071068, 0.7071068, 0, -0.7071068, 0.7071068, 0, 7.949748, 7.949748)
+fov = 34.6
+size = 6.885
+
+[node name="SuspicionManager" type="Node" parent="." unique_id=1620657818]
+
+[node name="VisualIndicator" type="Node3D" parent="." unique_id=2004129943]
+
+[node name="NPC_Worker" type="Node3D" parent="." unique_id=1506800027 node_paths=PackedStringArray("actor", "visual_pivot")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -1, 0, 0)
+script = ExtResource("12_ebfx1")
+actor = NodePath("GridActor")
+visual_pivot = NodePath("npc")
+
+[node name="GridActor" type="Node3D" parent="NPC_Worker" unique_id=1193001048]
+script = ExtResource("3_n0g3p")
+
+[node name="npc" parent="NPC_Worker" unique_id=2042138394 instance=ExtResource("12_g1ltr")]

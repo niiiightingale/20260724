@@ -1,0 +1,18 @@
+[gd_scene format=3 uid="uid://cmwxd16u7yrif"]
+
+[ext_resource type="Script" uid="uid://b3eu5e6082j5n" path="res://beat_clock.gd" id="1_ph61d"]
+[ext_resource type="PackedScene" uid="uid://dxvurx1srya8w" path="res://Clock.glb" id="2_8ujk8"]
+
+[node name="BeatClock" type="Node3D" unique_id=1396221 node_paths=PackedStringArray("hand_mesh")]
+script = ExtResource("1_ph61d")
+hand_mesh = NodePath("Clock/指针")
+step_angle_degrees = 30.0
+step_duration = 0.1
+
+[node name="Clock" parent="." unique_id=632800779 instance=ExtResource("2_8ujk8")]
+transform = Transform3D(0.99999994, 0, 0, 0, 1, 0, 0, 0, 0.99999994, 0, 2, 0)
+
+[node name="指针" parent="Clock" index="1" unique_id=739954146]
+transform = Transform3D(0.9999998, 0, 0, 0, 0.9999998, 0, 0, 0, 0.9999999, 0, 0, 0)
+
+[editable path="Clock"]
